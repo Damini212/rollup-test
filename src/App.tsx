@@ -1,24 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChangeEvent, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { State } from "./redux/store";
+import "./App.css";
 
 function App() {
+  const addTag = useSelector<State, string>((state) => state.addTag);
+  const tags = useSelector<State, string[]>((state) => state.tags);
+  const dispatch = useDispatch();
+
+  const handleChange = (event: any) => {
+    dispatch({ type: "CHANGE_INPUT", payload: event.target.value });
+  };
+
+  function handleTag(event: any) {
+    dispatch({ type: "ADD_TAG" });
+  }
+
+  function deleteTag(index: number) {
+    dispatch({ type: "DELETE_TAG", payload: index });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div id="App">
+      <div className="input-field">
+        <input
+          type="text"
+          placeholder="placeholder"
+          onChange={handleChange}
+          value={addTag}
+        />
+        <button
+          className="addTag-btn"
+          disabled={addTag.length === 0}
+          onClick={handleTag}
         >
-          Learn React
-        </a>
-      </header>
+          Add tag
+        </button>
+      </div>
+
+      <div>
+        {tags.map((tag, index) => {
+          return (
+            <button className="tag-btn" onClick={() => deleteTag(index)}>
+              {tag}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
